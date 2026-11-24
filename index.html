@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ladder Toernooi – PietjanKnor</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a1f;--card:#15152f;--pink:#ff2e97;--yellow:#ffe933;--purple:#9b4dff;--cream:#f6efe0}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:#fff;font-family:'Space Mono',monospace;
+background:radial-gradient(ellipse at 100% 0,#7a2bd055,transparent 45%),radial-gradient(ellipse at 0 100%,#ff2e9740,transparent 50%),var(--bg)}
+h1,h2,h3,.brush,button,.tab{font-family:'Permanent Marker',Impact,sans-serif;font-style:italic;text-transform:uppercase;margin:0}
+header{display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center;padding:1.2rem clamp(1rem,4vw,3rem) .6rem}
+.brand{color:var(--pink);font-size:1.5rem;line-height:1;transform:rotate(-6deg)}
+.brand small{display:block;font-family:'Space Mono',monospace;font-style:normal;color:#cfd;font-size:.6rem;letter-spacing:.15em;margin-top:.4rem;text-transform:uppercase}
+.title{text-align:center;transform:skew(-6deg)}
+.title h1{font-size:clamp(2.2rem,7vw,5rem);line-height:.9;color:var(--cream)}
+.title h1 span{color:var(--pink);display:block;text-shadow:3px 3px 0 #000}
+.title p{margin:.5rem 0 0;font-size:.7rem;letter-spacing:.3em;color:#fff}
+.badge{background:var(--cream);color:#111;padding:.6rem .9rem;transform:rotate(5deg);text-align:center;clip-path:polygon(0 8%,100% 0,95% 100%,4% 94%);font-size:.85rem}
+.badge b{display:block;font-family:'Permanent Marker',Impact;font-size:2rem;color:var(--pink);-webkit-text-stroke:2px #111;paint-order:stroke fill}
+.datebar{margin:.4rem clamp(1rem,4vw,3rem) 0;padding:.6rem 1.2rem;background:#000;border-top:3px solid var(--pink);display:flex;flex-wrap:wrap;gap:.5rem 2rem;justify-content:center;font-size:1.1rem}
+.datebar b{color:var(--yellow);font-family:'Permanent Marker',Impact;font-style:italic}
+nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:1rem clamp(1rem,4vw,3rem)}
+.tab,button{background:var(--card);color:#fff;border:2px solid var(--pink);padding:.6rem 1.1rem;font-size:1rem;cursor:pointer;transform:skew(-8deg)}
+.tab.on,button.hot{background:var(--pink);color:#fff;box-shadow:4px 4px 0 var(--yellow)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+main{padding:0 clamp(1rem,4vw,3rem) 3rem}
+.view{display:none}.view.on{display:block}
+.poules{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:1.5rem}
+.ladder{background:var(--card);border-left:10px solid var(--purple);border-right:10px solid var(--purple);padding:1rem;overflow-x:auto}
+.ladder h2{font-size:2rem;color:var(--yellow);margin-bottom:.8rem;transform:skew(-6deg)}
+.row{display:grid;grid-template-columns:2.4rem minmax(8rem,1fr) repeat(5,2.3rem) 3.2rem;align-items:center;gap:.3rem;padding:.7rem .5rem;border-top:4px solid #2d2d58;text-align:center}
+.row.head{border-top:0;font-size:.7rem;color:#b9b9e6;padding:.2rem .5rem}
+.row .n{font-family:'Permanent Marker',Impact;font-size:1.5rem;color:var(--pink)}
+.row .t{text-align:left;font-weight:700;font-size:1.05rem}
+.row .p{font-family:'Permanent Marker',Impact;font-size:1.5rem;color:var(--yellow)}
+.row:nth-child(2){background:linear-gradient(90deg,#ff2e9733,transparent)}
+.row.flash{animation:fl 1.6s}
+@keyframes fl{0%,40%{background:var(--yellow);color:#000}100%{background:none}}
+.meta{margin-top:.8rem;font-size:.75rem;color:#b9b9e6}
+.slot{margin-bottom:1.2rem;background:var(--card);border-left:6px solid var(--pink);padding:.8rem 1rem}
+.slot h3{font-size:1.5rem;color:var(--yellow);margin-bottom:.5rem}
+.match{display:grid;grid-template-columns:7.5rem 1fr auto 1fr;gap:.6rem;align-items:center;padding:.5rem 0;border-top:1px dashed #3c3c70}
+.match .lab{font-size:.7rem;color:#b9b9e6}
+.match .lab b{display:inline-block;padding:.1rem .4rem;margin-top:.2rem;color:#000;background:var(--pink)}
+.match .lab b.d{background:var(--purple);color:#fff}
+.match .a{text-align:right;font-weight:700}
+.sc{display:flex;gap:.4rem;align-items:center;font-family:'Permanent Marker',Impact}
+.sc input{width:3.4rem;height:2.6rem;text-align:center;font-size:1.3rem;font-family:'Permanent Marker',Impact;background:#000;color:var(--yellow);border:2px solid var(--purple)}
+.match.klaar{background:#ffffff08}.match.klaar input{border-color:var(--yellow)}
+.slot.finale{border-left-color:var(--yellow);background:linear-gradient(90deg,#ff2e9730,var(--card) 40%)}
+.pauze{margin:0 0 1.2rem;padding:.5rem 1rem;text-align:center;border:2px dashed var(--yellow);color:var(--yellow);font-family:'Permanent Marker',Impact,sans-serif;font-style:italic;text-transform:uppercase}
+.kijk .set{display:none}
+input[readonly]{border-color:transparent!important}
+#status{font-size:.8rem;align-self:center;margin-left:auto}
+.set{display:flex;gap:1rem;flex-wrap:wrap;align-items:end;margin-top:2rem;padding:1rem;border:2px dashed var(--purple)}
+.set label{display:block;font-size:.75rem;color:#b9b9e6}
+select{background:#000;color:#fff;border:2px solid var(--purple);padding:.4rem;font-family:inherit}
+.warn{color:var(--yellow);font-size:.85rem;margin:.5rem 0}
+.tv header,.tv nav,.tv .datebar,.tv #prog,.tv .set{display:none}
+.tv #stand{display:block!important}.tv .row{font-size:1.4rem;padding:1.1rem .5rem}.tv .ladder h2{font-size:3rem}
+.tvx{display:none;position:fixed;top:.6rem;right:.6rem}.tv .tvx{display:block}
+@media(max-width:640px){header{grid-template-columns:1fr}.badge{display:none}
+.match{grid-template-columns:1fr auto 1fr}.match .lab{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.row.flash{animation:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">♛ PietjanKnor<small>Hockey · Music · Food · Friends &amp; Good Vibes</small></div>
+ <div class="title"><h1>Ladder<span>Toernooi</span></h1><p>BY PIETJANKNOR · INDOOR ZAALHOCKEY</p></div>
+ <div class="badge">Back to the<b>90’s</b></div>
+</header>
+<div class="datebar"><span>Zaterdag <b>28 november</b></span><span>@ <b>H.O.D.</b> Valkenswaard</span><span>🪩 Hockey meets the 90’s</span></div>
+<nav>
+ <button class="tab on" data-v="stand">Live stand</button>
+ <button class="tab" data-v="prog">Programma &amp; uitslagen</button>
+ <span id="status"></span>
+ <button class="tab" id="tvbtn" title="Toon alleen de stand, handig voor een beamer of tv">TV-modus</button>
+</nav>
+<button class="tvx hot" id="tvx">Sluit TV-modus</button>
+<main>
+ <section class="view on" id="stand"><div class="poules" id="poules"></div></section>
+ <section class="view" id="prog">
+  <div id="warn"></div><div id="slots"></div>
+  <div class="set">
+   <div><label for="wpt">Wedstrijden per team</label><select id="wpt"><option value="3">3</option><option value="4">4</option><option value="5">5 (vult het schema precies)</option><option value="6">6 (past niet)</option><option value="7">7 (iedereen tegen iedereen, past niet)</option></select></div>
+   <button id="reset">Wis alle uitslagen</button>
+  </div>
+ </section>
+</main>
+<script>
+const POULES={ladder:{naam:'Ladder',teams:['Echtnieleste','Nieleste','De Hodenzonen','Aztecs All Inc',
+  'Hockey Pockeys','Limoncello Ladies','HOD Dames 1-1','HOD Dames 1-2']}};
+// Starttijden van de wedstrijdrondes (20 min per wedstrijd, 10 min pauze ertussen).
+// Lunchpauze 12:20-13:05. Pas deze lijst aan om het programma te wijzigen.
+const TIJDEN=['11:00','11:30','12:00','13:05','13:35','14:05','14:35','15:05','15:35','16:05'];
+const FINALE_T='16:25'; // finaleronde: nr. 1-2 en nr. 3-4 van de ladder
+const DUUR=20;
+const KEY='ladder-toernooi-v3';
+// ---- Meerdere apparaten: vul hier de URL van je Firebase Realtime Database in (zonder / aan het eind).
+// Voorbeeld: 'https://mijn-toernooi-default-rtdb.europe-west1.firebasedatabase.app'
+// Leeg laten = alleen opslag in deze browser.
+const DB_URL='https://laddertoernooi-2026-default-rtdb.europe-west1.firebasedatabase.app';
+// Invoer (scores aanpassen) kan alleen via de link ...?beheer=CODE. Dit verbergt alleen de invoer voor bezoekers, het is geen beveiliging.
+const CODE='knor90';
+const BEHEER=!DB_URL||new URLSearchParams(location.search).get('beheer')===CODE;
+const RO=BEHEER?'':'readonly';
+if(!BEHEER)document.documentElement.classList.add('kijk');
+const K=id=>id.replace(/[^\w|-]/g,'_');
+let lastWrite=0;
+function setStatus(ok){const e=document.getElementById('status');if(!e)return;
+ e.textContent=!DB_URL?'Alleen lokaal':ok?'● Live verbonden':'○ Geen verbinding';e.style.color=ok||!DB_URL?'var(--yellow)':'var(--pink)'}
+function put(path,val){if(!DB_URL)return;lastWrite=Date.now();
+ fetch(`${DB_URL}/ladder/${path}.json`,{method:val===null?'DELETE':'PUT',body:val===null?undefined:JSON.stringify(val)}).then(()=>setStatus(true)).catch(()=>setStatus(false))}
+async function poll(){if(!DB_URL)return;
+ try{const d=(await (await fetch(`${DB_URL}/ladder.json`,{cache:'no-store'})).json())||{};setStatus(true);
+  if(Date.now()-lastWrite<4000)return; // eigen wijziging eerst laten landen
+  const old=JSON.stringify([S.wpt,S.scores]);S.wpt=+d.wpt||S.wpt;plan();const sc={};
+  [...ALL,{id:'finale|1'},{id:'finale|2'}].forEach(m=>{const v=(d.scores||{})[K(m.id)];if(v)sc[m.id]=[String(v.a),String(v.b)]});
+  S.scores=sc;if(JSON.stringify([S.wpt,S.scores])!==old){save();init(true)}
+ }catch(e){setStatus(false)}}
+let S=load();
+function load(){try{return Object.assign({scores:{},wpt:5},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return{scores:{},wpt:5}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const $=s=>document.querySelector(s);
+const mins=t=>{const[h,m]=t.split(':');return h*60+ +m};
+const fmt=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+
+function rr(t){const a=[...t];if(a.length%2)a.push(null);const n=a.length,R=[];
+ for(let r=0;r<n-1;r++){const m=[];for(let i=0;i<n/2;i++){const x=a[i],y=a[n-1-i];if(x&&y)m.push([x,y])}R.push(m);a.splice(1,0,a.pop())}return R}
+
+let ALL=[],PLAN=[],OVER=0;
+function plan(){
+ ALL=[];
+ for(const p in POULES){const R=rr(POULES[p].teams);
+  for(let r=0;r<S.wpt;r++){const c=Math.floor(r/R.length);
+   R[r%R.length].forEach(([x,y])=>{if(c%2)[x,y]=[y,x];ALL.push({p,a:x,b:y,id:`${p}|${c}|${x}|${y}`})})}}
+ PLAN=[];OVER=0;
+ for(let i=0;i*2<ALL.length;i++){const m=ALL.slice(i*2,i*2+2);
+  if(i<TIJDEN.length)PLAN.push({t:mins(TIJDEN[i]),m});else OVER+=m.length}
+}
+
+function matchesOf(p,fin){const l=ALL.filter(m=>m.p===p);
+ if(fin&&p==='ladder')finalePairs().forEach(([a,b],k)=>l.push({p,a,b,id:'finale|'+(k+1)}));return l}
+function stand(p,fin=true){
+ const T={};POULES[p].teams.forEach(t=>T[t]={t,g:0,w:0,gl:0,v:0,vs:0,gs:0,pt:0});
+ matchesOf(p,fin).forEach(m=>{const s=S.scores[m.id];if(!s||s[0]===''||s[1]==='')return;
+  const x=T[m.a],y=T[m.b],a=+s[0],b=+s[1];x.g++;y.g++;x.vs+=a;x.gs+=b;y.vs+=b;y.gs+=a;
+  if(a>b){x.w++;y.v++;x.pt+=3}else if(a<b){y.w++;x.v++;y.pt+=3}else{x.gl++;y.gl++;x.pt++;y.pt++}});
+ return Object.values(T).sort((a,b)=>b.pt-a.pt||(b.vs-b.gs)-(a.vs-a.gs)||b.vs-a.vs||a.t.localeCompare(b.t));
+}
+// De laatste ronde wordt ingedeeld op de stand na de gewone rondes (nr. 1-2 en nr. 3-4); de uitslagen tellen gewoon mee.
+function finalePairs(){const st=stand('ladder',false);return [[st[0].t,st[1].t],[st[2].t,st[3].t]]}
+function updFinale(){const fp=finalePairs();
+ fp.forEach(([a,b],k)=>{const r=document.querySelector(`[data-id="finale|${k+1}"]`);if(!r)return;
+  r.querySelector('.a').textContent=a;r.querySelector('.b').textContent=b;
+  const i=r.querySelectorAll('input');i[0].setAttribute('aria-label','Doelpunten '+a);i[1].setAttribute('aria-label','Doelpunten '+b)})}
+const prev={};
+function renderStand(){
+ let h='';
+ for(const p in POULES){const st=stand(p),played=matchesOf(p,true).filter(m=>hasScore(m.id)).length;
+  const order=st.map(x=>x.t).join('|');
+  h+=`<div class="ladder"><h2>${POULES[p].naam}</h2>
+  <div class="row head"><span></span><span style="text-align:left">Team</span><span>G</span><span>W</span><span>GL</span><span>V</span><span>DS</span><span>Pt</span></div>`;
+  st.forEach((x,i)=>{const was=prev[p]?prev[p].indexOf(x.t):i;const ds=x.vs-x.gs;
+   h+=`<div class="row${was!==i&&prev[p]?' flash':''}"><span class="n">${i===0?'♛':i+1}</span><span class="t">${x.t}</span><span>${x.g}</span><span>${x.w}</span><span>${x.gl}</span><span>${x.v}</span><span>${ds>0?'+':''}${ds}</span><span class="p">${x.pt}</span></div>`});
+  h+=`<div class="meta">${played} van ${matchesOf(p,true).length} wedstrijden gespeeld · winst 3 pt, gelijk 1 pt · bij gelijk: doelsaldo, dan voor · laatste ronde: nr. 1–2 en nr. 3–4 uit de stand</div></div>`;
+  prev[p]=st.map(x=>x.t);}
+ $('#poules').innerHTML=h;
+}
+function hasScore(id){const s=S.scores[id];return s&&s[0]!==''&&s[1]!==''}
+
+function renderProg(){
+ $('#wpt').value=S.wpt;
+ $('#warn').innerHTML=OVER?`<p class="warn">Let op: ${OVER} wedstrijd(en) passen niet meer in het programma. Kies minder wedstrijden per team.</p>`:'';
+ let h='',end=null;
+ PLAN.forEach(s=>{
+  if(end!==null&&s.t-end>10)h+=`<div class="pauze">${end===mins('12:20')?'Lunchpauze':'Pauze'} ${fmt(end)} – ${fmt(s.t)}</div>`;
+  end=s.t+DUUR;
+  h+=`<div class="slot"><h3>${fmt(s.t)} – ${fmt(end)}</h3>`;
+  s.m.forEach((m,i)=>{const sc=S.scores[m.id]||['',''],veld=i+1;
+   h+=`<div class="match${hasScore(m.id)?' klaar':''}" data-id="${m.id}"><div class="lab"><b>Veld ${veld}</b></div>
+   <span class="a">${m.a}</span><span class="sc"><input ${RO} type="number" min="0" inputmode="numeric" aria-label="Doelpunten ${m.a}" value="${sc[0]}">–<input ${RO} type="number" min="0" inputmode="numeric" aria-label="Doelpunten ${m.b}" value="${sc[1]}"></span><span>${m.b}</span></div>`});
+  h+='</div>'});
+ const fe=mins(FINALE_T)+DUUR;
+ if(end!==null&&mins(FINALE_T)-end>10)h+=`<div class="pauze">Pauze ${fmt(end)} – ${FINALE_T}</div>`;
+ h+=`<div class="slot finale"><h3>${FINALE_T} – ${fmt(fe)} · Laatste ronde</h3>`;
+ [0,1].forEach(k=>{const sc=S.scores['finale|'+(k+1)]||['',''];
+  h+=`<div class="match${hasScore('finale|'+(k+1))?' klaar':''}" data-id="finale|${k+1}"><div class="lab"><b>Veld ${k+1}</b><br>Plek ${2*k+1} – ${2*k+2}</div>
+  <span class="a"></span><span class="sc"><input ${RO} type="number" min="0" inputmode="numeric" value="${sc[0]}">–<input ${RO} type="number" min="0" inputmode="numeric" value="${sc[1]}"></span><span class="b"></span></div>`});
+ h+='</div>';
+ $('#slots').innerHTML=h;updFinale();
+}
+$('#slots').addEventListener('input',e=>{
+ const row=e.target.closest('.match');if(!row)return;
+ const [a,b]=[...row.querySelectorAll('input')].map(i=>i.value.trim());
+ if(a===''&&b==='')delete S.scores[row.dataset.id];else S.scores[row.dataset.id]=[a,b];
+ row.classList.toggle('klaar',a!==''&&b!=='');save();put('scores/'+K(row.dataset.id),a===''&&b===''?null:{a,b});renderStand();updFinale();
+});
+$('#wpt').onchange=e=>{S.wpt=+e.target.value;save();put('wpt',S.wpt);init()};
+$('#reset').onclick=()=>{if(confirm('Weet je zeker dat je alle uitslagen wilt wissen?')){S.scores={};save();put('scores',null);init()}};
+document.querySelectorAll('.tab[data-v]').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===b.dataset.v))});
+const tv=on=>document.body.classList.toggle('tv',on);
+$('#tvbtn').onclick=()=>{tv(true);document.documentElement.requestFullscreen?.().catch(()=>{})};
+$('#tvx').onclick=()=>{tv(false);if(document.fullscreenElement)document.exitFullscreen()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')tv(false)});
+// Tweede venster (bijv. beamer) blijft automatisch live meelopen
+addEventListener('storage',e=>{if(e.key===KEY){S=load();init(true)}});
+function init(keepFocus){plan();renderStand();if(!keepFocus||!document.activeElement.closest?.('#slots'))renderProg();updFinale()}
+init();setStatus(false);poll();setInterval(poll,3000);
+</script>
+</body>
+</html>
